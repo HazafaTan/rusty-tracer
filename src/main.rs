@@ -11,9 +11,9 @@ fn main() -> std::io::Result<()> {
             let r: f32 = (i as f32) / ((image_width - 1) as f32);
             let g: f32 = (j as f32) / ((image_height - 1) as f32);
             let b: f32 = 0.25;
-            let ir = (r * 255.99) as u8;
-            let ig = (g * 255.99) as u8;
-            let ib = (b * 255.99) as u8;
+            let ir: u8 = (r * 255.99) as u8;
+            let ig: u8 = (g * 255.99) as u8;
+            let ib: u8 = (b * 255.99) as u8;
             file.write_all(format!("{} {} {}\n", ir, ig, ib).as_bytes())?;
         }
     }
