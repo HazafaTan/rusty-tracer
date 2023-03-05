@@ -2,6 +2,8 @@ use std::fs::File;
 use std::io::prelude::Write;
 mod vec3;
 use vec3::Vec3;
+mod ray;
+use ray::Ray;
 
 fn main() -> std::io::Result<()> {
     let image_width: u16 = 256;

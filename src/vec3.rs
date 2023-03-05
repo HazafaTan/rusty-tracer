@@ -1,12 +1,10 @@
-// defining a new struct
 pub struct Vec3 {
     pub x: f64,
     pub y: f64,
     pub z: f64,
 }
 pub type color = Vec3;
-pub type point = Vec3;
-// implementing the struct
+pub type point3 = Vec3;
 impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
         Vec3 { x, y, z }
@@ -44,6 +42,14 @@ impl Vec3 {
         };
     }
 
+    pub fn multiply(v1: Vec3, t: f64) -> Vec3 {
+        return Vec3 {
+            x: v1.x * t,
+            y: v1.y * t,
+            z: v1.z * t,
+        };
+    }
+
     pub fn sub(v1: Vec3, v2: Vec3) -> Vec3 {
         return Vec3 {
             x: (v1.x - v2.x),
@@ -61,14 +67,5 @@ impl Vec3 {
     }
     pub fn dot(v1: Vec3, v2: Vec3) -> f64 {
         return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
-    }
-
-    pub fn test() {
-        let color: Vec3 = Vec3 {
-            x: 1.0,
-            y: 2.0,
-            z: 4.0,
-        };
-        println!("{}", color.x);
     }
 }
