@@ -1,5 +1,7 @@
 use std::fs::File;
 use std::io::prelude::Write;
+mod vec3;
+use vec3::Vec3;
 
 fn main() -> std::io::Result<()> {
     let image_width: u16 = 256;
@@ -17,5 +19,7 @@ fn main() -> std::io::Result<()> {
             file.write_all(format!("{} {} {}\n", ir, ig, ib).as_bytes())?;
         }
     }
+    let meow = Vec3::new(1.0, 2.0, 3.0);
+    println!("{}", Vec3::length(meow));
     Ok(())
 }
