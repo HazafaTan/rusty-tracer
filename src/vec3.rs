@@ -52,6 +52,17 @@ impl Vec3 {
         };
     }
 
+    pub fn cross(v1: Vec3, v2: Vec3) -> Vec3 {
+        return Vec3 {
+            x: v1.y * v2.z - v1.z * v2.y,
+            y: v1.z * v2.x - v1.x * v2.z,
+            z: v1.x * v2.y - v1.y * v2.x,
+        };
+    }
+    pub fn dot(v1: Vec3, v2: Vec3) -> f64 {
+        return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+    }
+
     pub fn test() {
         let color: Vec3 = Vec3 {
             x: 1.0,
