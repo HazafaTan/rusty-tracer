@@ -1,7 +1,7 @@
-use std::fs::File;
 use std::io::prelude::Write;
+use std::{fs::File, mem::Discriminant};
 mod vec3;
-use vec3::{color, Vec3};
+use vec3::{color, point3, Vec3};
 mod ray;
 use ray::Ray;
 
@@ -17,7 +17,7 @@ fn main() -> std::io::Result<()> {
     let viewport_width: f64 = aspect_ratio * viewport_height;
     let focal_length = 1.0;
 
-    let origin = vec3::point3::new(0.0, 0.0, 0.0);
+    let origin = point3::new(0.0, 0.0, 0.0);
     let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
     let vertical = Vec3::new(0.0, viewport_height, 0.0);
     let lower_left_corner = Vec3::sub(
@@ -52,7 +52,7 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
-fn write_color<W: Write>(out: &mut W, pixel_color: vec3::color) -> std::io::Result<()> {
+fn write_color<W: Write>(out: &mut W, pixel_color: color) -> std::io::Result<()> {
     write!(
         out,
         "{} {} {}\n",
@@ -63,10 +63,35 @@ fn write_color<W: Write>(out: &mut W, pixel_color: vec3::color) -> std::io::Resu
 }
 
 fn ray_color(r: Ray) -> Vec3 {
+    let t = hit_sphere(point3::new(0.0, 0.0, -1.0), 0.5, r);
+    if t > 0.0 {
+        let N = Vec3::unit_vector(Vec3::sub(
+            Ray::at(t, r),
+            Vec3 {
+                x: (0.0),
+                y: (0.0),
+                z: (-1.0),
+            },
+        ));
+        return Vec3::multiply(color::new(N.x + 1.0, N.y + 1.0, N.z + 1.0), 0.5);
+    }
     let unit_direction = Vec3::unit_vector(r.direction);
-    let t = 0.5 * unit_direction.y + 1.0;
+    let t = 0.5 * (unit_direction.y + 1.0);
     return Vec3::add(
-        Vec3::multiply(vec3::color::new(0.5, 0.7, 1.), t),
-        Vec3::multiply(vec3::color::new(1.0, 1.0, 1.0), 1.0 - t),
+        Vec3::multiply(color::new(0.5, 0.7, 1.), t),
+        Vec3::multiply(color::new(1.0, 1.0, 1.0), 1.0 - t),
     );
+}
+
+fn hit_sphere(center: point3, radius: f64, r: ray::Ray) -> f64 {
+    let oc = Vec3::sub(r.origin, center);
+    let a = Vec3::dot(r.direction, r.direction);
+    let b = 2.0 * Vec3::dot(oc, r.direction);
+    let c = Vec3::dot(oc, oc) - radius * radius;
+    let discriminant = (b * b) - (4.0 * a * c);
+    if discriminant < 0.0 {
+        return -1.0;
+    } else {
+        return ((-b) - discriminant.sqrt()) / (2.0 * a);
+    }
 }
