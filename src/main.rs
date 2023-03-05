@@ -1,5 +1,5 @@
+use std::fs::File;
 use std::io::prelude::Write;
-use std::{fs::File, mem::Discriminant};
 mod vec3;
 use vec3::{color, point3, Vec3};
 mod ray;
