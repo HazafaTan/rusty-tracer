@@ -45,11 +45,6 @@ fn main() -> std::io::Result<()> {
                 ),
                 origin,
             );
-            println!(
-                "Direction: {}, Origin:{}",
-                Ray::direction(r),
-                Ray::origin(r)
-            );
             let pixel_color = ray_color(r);
             write_color(&mut file, pixel_color)?;
         }
