@@ -1,9 +1,11 @@
 use crate::vec3;
 use crate::vec3::Vec3;
 
+#[derive(Clone, Copy, Debug, PartialEq)]
+
 pub struct Ray {
-    direction: vec3::Vec3,
-    origin: vec3::point3,
+    pub direction: vec3::Vec3,
+    pub origin: vec3::point3,
 }
 
 impl Ray {

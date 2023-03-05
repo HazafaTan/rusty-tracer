@@ -1,26 +1,59 @@
 use std::fs::File;
 use std::io::prelude::Write;
 mod vec3;
-use vec3::Vec3;
+use vec3::{color, Vec3};
 mod ray;
 use ray::Ray;
 
 fn main() -> std::io::Result<()> {
-    let image_width: u16 = 256;
-    let image_height: u16 = 256;
+    //Image
+    let aspect_ratio: f64 = 16.0 / 9.0;
+
+    let image_width: u16 = 400;
+    let image_height: u16 = (image_width as f64 / aspect_ratio) as u16;
+
+    // Camera
+    let viewport_height: f64 = 2.0;
+    let viewport_width: f64 = aspect_ratio * viewport_height;
+    let focal_length = 1.0;
+
+    let origin = vec3::point3::new(0.0, 0.0, 0.0);
+    let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
+    let vertical = Vec3::new(0.0, viewport_height, 0.0);
+    let lower_left_corner = Vec3::sub(
+        Vec3::sub(
+            Vec3::sub(origin, Vec3::divide(horizontal, 2.0)),
+            Vec3::divide(vertical, 2.0),
+        ),
+        Vec3 {
+            x: (0.0),
+            y: (0.0),
+            z: (focal_length),
+        },
+    );
+
     let mut file = File::create("out.ppm")?;
     file.write_all(format!("P3\n{} {}\n255\n", image_width, image_height).as_bytes())?;
     for i in (0..image_height).rev() {
         for j in 0..image_width {
-            let r: f64 = (i as f64) / ((image_width - 1) as f64);
-            let g: f64 = (j as f64) / ((image_height - 1) as f64);
-            let b: f64 = 0.25;
-            let pixel_color = Vec3::new(r, g, b);
+            let u: f64 = (j as f64) / ((image_width - 1) as f64);
+            let v: f64 = (i as f64) / ((image_height - 1) as f64);
+            let r = Ray::new(
+                Vec3::add(
+                    Vec3::add(Vec3::multiply(horizontal, u), lower_left_corner),
+                    Vec3::sub(Vec3::multiply(vertical, v), origin),
+                ),
+                origin,
+            );
+            println!(
+                "Direction: {}, Origin:{}",
+                Ray::direction(r),
+                Ray::origin(r)
+            );
+            let pixel_color = ray_color(r);
             write_color(&mut file, pixel_color)?;
         }
     }
-    let meow = Vec3::new(1.0, 2.0, 3.0);
-    println!("{}", Vec3::length(meow));
     Ok(())
 }
 
@@ -32,4 +65,13 @@ fn write_color<W: Write>(out: &mut W, pixel_color: vec3::color) -> std::io::Resu
         (255.999 * pixel_color.y) as i32,
         (255.999 * pixel_color.z) as i32
     )
+}
+
+fn ray_color(r: Ray) -> Vec3 {
+    let unit_direction = Vec3::unit_vector(r.direction);
+    let t = 0.5 * unit_direction.y + 1.0;
+    return Vec3::add(
+        Vec3::multiply(vec3::color::new(0.5, 0.7, 1.), t),
+        Vec3::multiply(vec3::color::new(1.0, 1.0, 1.0), 1.0 - t),
+    );
 }
