@@ -1,11 +1,11 @@
 // defining a new struct
 pub struct Vec3 {
-    x: f64,
-    y: f64,
-    z: f64,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
-type color = Vec3;
-type point = Vec3;
+pub type color = Vec3;
+pub type point = Vec3;
 // implementing the struct
 impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {

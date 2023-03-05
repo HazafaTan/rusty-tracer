@@ -10,16 +10,24 @@ fn main() -> std::io::Result<()> {
     file.write_all(format!("P3\n{} {}\n255\n", image_width, image_height).as_bytes())?;
     for i in (0..image_height).rev() {
         for j in 0..image_width {
-            let r: f32 = (i as f32) / ((image_width - 1) as f32);
-            let g: f32 = (j as f32) / ((image_height - 1) as f32);
-            let b: f32 = 0.25;
-            let ir: u8 = (r * 255.99) as u8;
-            let ig: u8 = (g * 255.99) as u8;
-            let ib: u8 = (b * 255.99) as u8;
-            file.write_all(format!("{} {} {}\n", ir, ig, ib).as_bytes())?;
+            let r: f64 = (i as f64) / ((image_width - 1) as f64);
+            let g: f64 = (j as f64) / ((image_height - 1) as f64);
+            let b: f64 = 0.25;
+            let pixel_color = Vec3::new(r, g, b);
+            write_color(&mut file, pixel_color)?;
         }
     }
     let meow = Vec3::new(1.0, 2.0, 3.0);
     println!("{}", Vec3::length(meow));
     Ok(())
+}
+
+fn write_color<W: Write>(out: &mut W, pixel_color: vec3::color) -> std::io::Result<()> {
+    write!(
+        out,
+        "{} {} {}\n",
+        (255.999 * pixel_color.x) as i32,
+        (255.999 * pixel_color.y) as i32,
+        (255.999 * pixel_color.z) as i32
+    )
 }
