@@ -33,14 +33,6 @@ impl Vec3 {
         };
     }
 
-    pub fn times(v1: Vec3, v2: Vec3) -> Vec3 {
-        return Vec3 {
-            x: v1.x * v2.x,
-            y: v1.y * v2.y,
-            z: v1.z * v2.z,
-        };
-    }
-
     pub fn multiply(v1: Vec3, t: f64) -> Vec3 {
         return Vec3 {
             x: v1.x * t,
@@ -55,13 +47,7 @@ impl Vec3 {
             z: v1.z / t,
         };
     }
-    pub fn addition(v1: Vec3, t: f64) -> Vec3 {
-        return Vec3 {
-            x: v1.x + t,
-            y: v1.y + t,
-            z: v1.z + t,
-        };
-    }
+
     pub fn sub(v1: Vec3, v2: Vec3) -> Vec3 {
         return Vec3 {
             x: (v1.x - v2.x),
