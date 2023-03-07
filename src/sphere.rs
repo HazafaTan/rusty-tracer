@@ -36,11 +36,13 @@ impl Sphere {
         } else {
             Vec3::multiply(outward_normal, -1.0)
         };
-        Some(HitRecord {
+
+        let rec = HitRecord {
+            t: root,
             p,
             normal,
-            t: root,
             front_face,
-        })
+        };
+        Some(rec)
     }
 }
