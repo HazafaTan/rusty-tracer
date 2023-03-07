@@ -29,20 +29,14 @@ impl Sphere {
             }
         }
         let p = Ray::at(root, *r);
-        let outward_normal = Vec3::divide(Vec3::sub(p, self.center), self.radius);
-        let front_face = Vec3::dot(r.direction, outward_normal) < 0.0;
-        let normal = if front_face {
-            outward_normal
-        } else {
-            Vec3::multiply(outward_normal, -1.0)
-        };
-
-        let rec = HitRecord {
+        let mut rec = HitRecord {
             t: root,
             p,
-            normal,
-            front_face,
+            normal: Vec3::new(0.0, 0.0, 0.0),
+            front_face: false,
         };
+        let outward_normal = Vec3::divide(Vec3::sub(p, self.center), self.radius);
+        rec.set_face_normal(*r, outward_normal);
         Some(rec)
     }
 }

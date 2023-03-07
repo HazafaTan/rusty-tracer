@@ -1,5 +1,5 @@
+use std::fs::File;
 use std::io::prelude::Write;
-use std::{f32::INFINITY, fs::File};
 mod vec3;
 use hittable::{Hittable, HittableList};
 use sphere::Sphere;
@@ -16,7 +16,7 @@ fn main() -> std::io::Result<()> {
     let image_height: u16 = (image_width as f64 / aspect_ratio) as u16;
 
     //World
-    let mut world = HittableList {
+    let world = HittableList {
         objects: vec![
             Hittable::S(Sphere {
                 center: Vec3::new(0.0, 0.0, -1.0),
@@ -81,7 +81,7 @@ fn write_color<W: Write>(out: &mut W, pixel_color: Color) -> std::io::Result<()>
 
 fn ray_color(r: Ray, world: &hittable::HittableList) -> Vec3 {
     if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
-        let k = Vec3::multiply((Vec3::add(rec.normal, Color::new(1.0, 1.0, 1.0))), 0.5);
+        let k = Vec3::multiply(Vec3::add(rec.normal, Color::new(1.0, 1.0, 1.0)), 0.5);
         return k;
     } else {
         let unit_direction = Vec3::unit_vector(r.direction);

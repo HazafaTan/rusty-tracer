@@ -1,5 +1,4 @@
 use std::fmt;
-
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec3 {
     pub x: f64,
@@ -31,14 +30,6 @@ impl Vec3 {
             x: v1.x + v2.x,
             y: v1.y + v2.y,
             z: v1.z + v2.z,
-        };
-    }
-
-    pub fn div(v1: Vec3, v2: Vec3) -> Vec3 {
-        return Vec3 {
-            x: v1.x / v2.x,
-            y: v1.y / v2.y,
-            z: v1.z / v2.z,
         };
     }
 
