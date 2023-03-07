@@ -1,6 +1,8 @@
-use std::fs::File;
 use std::io::prelude::Write;
+use std::{f32::INFINITY, fs::File};
 mod vec3;
+use hittable::{Hittable, HittableList};
+use sphere::Sphere;
 use vec3::{Color, Point3, Vec3};
 mod ray;
 use ray::Ray;
@@ -12,6 +14,20 @@ fn main() -> std::io::Result<()> {
 
     let image_width: u16 = 400;
     let image_height: u16 = (image_width as f64 / aspect_ratio) as u16;
+
+    //World
+    let mut world = HittableList {
+        objects: vec![
+            Hittable::S(Sphere {
+                center: Vec3::new(0.0, 0.0, -1.0),
+                radius: 0.5,
+            }),
+            Hittable::S(Sphere {
+                center: Vec3::new(0.0, -100.5, -1.0),
+                radius: 100.0,
+            }),
+        ],
+    };
 
     // Camera
     let viewport_height: f64 = 2.0;
@@ -46,7 +62,7 @@ fn main() -> std::io::Result<()> {
                 ),
                 origin,
             );
-            let pixel_color = ray_color(r);
+            let pixel_color = ray_color(r, &world);
             write_color(&mut file, pixel_color)?;
         }
     }
@@ -63,36 +79,16 @@ fn write_color<W: Write>(out: &mut W, pixel_color: Color) -> std::io::Result<()>
     )
 }
 
-fn ray_color(r: Ray) -> Vec3 {
-    let t = hit_sphere(Point3::new(0.0, 0.0, -1.0), 0.5, r);
-    if t > 0.0 {
-        let N = Vec3::unit_vector(Vec3::sub(
-            Ray::at(t, r),
-            Vec3 {
-                x: (0.0),
-                y: (0.0),
-                z: (-1.0),
-            },
-        ));
-        return Vec3::multiply(Color::new(N.x + 1.0, N.y + 1.0, N.z + 1.0), 0.5);
-    }
-    let unit_direction = Vec3::unit_vector(r.direction);
-    let t = 0.5 * (unit_direction.y + 1.0);
-    return Vec3::add(
-        Vec3::multiply(Color::new(0.5, 0.7, 1.), t),
-        Vec3::multiply(Color::new(1.0, 1.0, 1.0), 1.0 - t),
-    );
-}
-
-fn hit_sphere(center: Point3, radius: f64, r: ray::Ray) -> f64 {
-    let oc = Vec3::sub(r.origin, center);
-    let a = Vec3::square_length(r.direction);
-    let half_b = Vec3::dot(oc, r.direction);
-    let c = Vec3::square_length(oc) - radius * radius;
-    let discriminant = (half_b * half_b) - (a * c);
-    if discriminant < 0.0 {
-        return -1.0;
+fn ray_color(r: Ray, world: &hittable::HittableList) -> Vec3 {
+    if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
+        let k = Vec3::multiply((Vec3::add(rec.normal, Color::new(1.0, 1.0, 1.0))), 0.5);
+        return k;
     } else {
-        return ((-half_b) - discriminant.sqrt()) / a;
+        let unit_direction = Vec3::unit_vector(r.direction);
+        let t = 0.5 * (unit_direction.y + 1.0);
+        return Vec3::add(
+            Vec3::multiply(Color::new(0.5, 0.7, 1.), t),
+            Vec3::multiply(Color::new(1.0, 1.0, 1.0), 1.0 - t),
+        );
     }
 }
