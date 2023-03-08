@@ -35,31 +35,7 @@ fn main() -> std::io::Result<()> {
     };
 
     // Camera
-    let viewport_height: f64 = 2.0;
-    let viewport_width: f64 = aspect_ratio * viewport_height;
-    let focal_length = 1.0;
-
-    let origin = Point3::new(0.0, 0.0, 0.0);
-    let horizontal = Vec3::new(viewport_width, 0.0, 0.0);
-    let vertical = Vec3::new(0.0, viewport_height, 0.0);
-    let lower_left_corner = Vec3::sub(
-        Vec3::sub(
-            Vec3::sub(origin, Vec3::divide(horizontal, 2.0)),
-            Vec3::divide(vertical, 2.0),
-        ),
-        Vec3 {
-            x: (0.0),
-            y: (0.0),
-            z: (focal_length),
-        },
-    );
-
-    let camera = Camera {
-        origin: (origin),
-        horizontal: (horizontal),
-        vertical: (vertical),
-        lower_left_corner: (lower_left_corner),
-    };
+    let camera = Camera::default();
 
     let mut file = File::create("out.ppm")?;
     file.write_all(format!("P3\n{} {}\n255\n", image_width, image_height).as_bytes())?;
