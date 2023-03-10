@@ -1,4 +1,8 @@
 use std::fmt;
+
+use crate::rtweekend::random_float;
+use crate::rtweekend::random_floats;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec3 {
     pub x: f64,
@@ -69,5 +73,31 @@ impl Vec3 {
 
     pub fn unit_vector(v: Vec3) -> Vec3 {
         return Self::divide(v, Self::length(v));
+    }
+    pub fn random_vec3() -> Vec3 {
+        return Vec3 {
+            x: (random_float()),
+            y: (random_float()),
+            z: (random_float()),
+        };
+    }
+    pub fn random_vec3s(min: f64, max: f64) -> Vec3 {
+        return Vec3 {
+            x: (random_floats(min, max)),
+            y: (random_floats(min, max)),
+            z: (random_floats(min, max)),
+        };
+    }
+    pub fn random_in_unit_sphere() -> Vec3 {
+        loop {
+            let p = Vec3::random_vec3s(-1.0, 1.0);
+            if Self::square_length(p) >= 1.0 {
+                continue;
+            }
+            return p;
+        }
+    }
+    pub fn random_unit_vector() -> Vec3 {
+        return Self::unit_vector(Self::random_in_unit_sphere());
     }
 }

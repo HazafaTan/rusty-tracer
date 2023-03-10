@@ -19,6 +19,7 @@ fn main() -> std::io::Result<()> {
     let samples_per_pixel: u64 = 100;
     let image_width: u16 = 400;
     let image_height: u16 = (image_width as f64 / aspect_ratio) as u16;
+    let max_depth = 50;
 
     //World
     let world = HittableList {
@@ -46,7 +47,7 @@ fn main() -> std::io::Result<()> {
                 let u: f64 = (j as f64 + random_float()) / ((image_width - 1) as f64);
                 let v: f64 = (i as f64 + random_float()) / ((image_height - 1) as f64);
                 let r = camera.get_ray(u, v);
-                pixel_color = Vec3::add(pixel_color, ray_color(r, &world));
+                pixel_color = Vec3::add(pixel_color, ray_color(r, &world, max_depth));
             }
             write_colors(&mut file, pixel_color, samples_per_pixel)?;
         }
@@ -65,9 +66,9 @@ fn write_colors<W: Write>(
 
     //divide the color by the number of samples
     let scale = 1.0 / samples_per_pixel as f64;
-    r *= scale;
-    g *= scale;
-    b *= scale;
+    r = (scale * r).sqrt();
+    g = (scale * g).sqrt();
+    b = (scale * b).sqrt();
 
     write!(
         out,
@@ -78,10 +79,30 @@ fn write_colors<W: Write>(
     )
 }
 
-fn ray_color(r: Ray, world: &hittable::HittableList) -> Vec3 {
+fn ray_color(r: Ray, world: &hittable::HittableList, depth: u32) -> Vec3 {
+    if depth <= 0 {
+        return Color {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+        };
+    }
+
     if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
-        let k = Vec3::multiply(Vec3::add(rec.normal, Color::new(1.0, 1.0, 1.0)), 0.5);
-        return k;
+        //let k = Vec3::multiply(Vec3::add(rec.normal, Color::new(1.0, 1.0, 1.0)), 0.5);
+        //return k;
+        let target: Point3 = Vec3::add(Vec3::add(rec.p, rec.normal), Vec3::random_unit_vector());
+        return Vec3::multiply(
+            ray_color(
+                Ray {
+                    direction: (Vec3::sub(target, rec.p)),
+                    origin: (rec.p),
+                },
+                world,
+                depth - 1,
+            ),
+            0.5,
+        );
     } else {
         let unit_direction = Vec3::unit_vector(r.direction);
         let t = 0.5 * (unit_direction.y + 1.0);
