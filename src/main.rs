@@ -88,10 +88,13 @@ fn ray_color(r: Ray, world: &hittable::HittableList, depth: u32) -> Vec3 {
         };
     }
 
-    if let Some(rec) = world.hit(r, 0.0, f64::INFINITY) {
+    if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
         //let k = Vec3::multiply(Vec3::add(rec.normal, Color::new(1.0, 1.0, 1.0)), 0.5);
         //return k;
-        let target: Point3 = Vec3::add(Vec3::add(rec.p, rec.normal), Vec3::random_unit_vector());
+        let target: Point3 = Vec3::add(
+            Vec3::add(rec.p, rec.normal),
+            Vec3::random_in_hemisphere(rec.normal),
+        );
         return Vec3::multiply(
             ray_color(
                 Ray {

@@ -1,4 +1,5 @@
 use std::fmt;
+use std::ops::Neg;
 
 use crate::rtweekend::random_float;
 use crate::rtweekend::random_floats;
@@ -99,5 +100,26 @@ impl Vec3 {
     }
     pub fn random_unit_vector() -> Vec3 {
         return Self::unit_vector(Self::random_in_unit_sphere());
+    }
+
+    pub fn random_in_hemisphere(v: Vec3) -> Vec3 {
+        let in_unit_sphere = Self::random_in_unit_sphere();
+        if Self::dot(in_unit_sphere, v) > 0.0 {
+            return in_unit_sphere;
+        } else {
+            return -(in_unit_sphere);
+        }
+    }
+}
+
+impl Neg for Vec3 {
+    type Output = Vec3;
+
+    fn neg(self) -> Vec3 {
+        Vec3 {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
     }
 }
