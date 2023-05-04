@@ -17,6 +17,7 @@ impl fmt::Display for Vec3 {
 }
 pub type Color = Vec3;
 pub type Point3 = Vec3;
+
 impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Vec3 {
         Vec3 { x, y, z }
@@ -38,6 +39,13 @@ impl Vec3 {
         };
     }
 
+    pub fn times(v1: Vec3, v2: Vec3) -> Vec3 {
+        return Vec3 {
+            x: v1.x * v2.x,
+            y: v1.y * v2.y,
+            z: v1.z * v2.z,
+        };
+    }
     pub fn multiply(v1: Vec3, t: f64) -> Vec3 {
         return Vec3 {
             x: v1.x * t,
@@ -68,6 +76,16 @@ impl Vec3 {
             z: v1.x * v2.y - v1.y * v2.x,
         };
     }
+
+    pub fn normalize(&self) -> Vec3 {
+        let inv_len = Vec3::length(*self).recip();
+        Vec3 {
+            x: self.x * inv_len,
+            y: self.y * inv_len,
+            z: self.z * inv_len,
+        }
+    }
+
     pub fn dot(v1: Vec3, v2: Vec3) -> f64 {
         return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
     }
@@ -109,6 +127,16 @@ impl Vec3 {
         } else {
             return -(in_unit_sphere);
         }
+    }
+    pub fn near_zero(v: Vec3) -> bool {
+        let s = 1e-8;
+        return (v.x.abs() < s) && (v.y.abs() < s) && (v.z.abs() < s);
+    }
+    pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
+        let dot = 2.0 * (Self::dot(v, n));
+        let c = Self::multiply(n, dot);
+        let j = Self::sub(v, c);
+        return j;
     }
 }
 

@@ -2,6 +2,7 @@ mod camera;
 mod hittable;
 mod ray;
 mod rtweekend;
+use material::Material;
 use rtweekend::{clamp, random_float};
 mod sphere;
 mod vec3;
@@ -12,6 +13,7 @@ use sphere::Sphere;
 use std::fs::File;
 use std::io::prelude::Write;
 use vec3::{Color, Point3, Vec3};
+mod material;
 
 fn main() -> std::io::Result<()> {
     //Image
@@ -22,15 +24,42 @@ fn main() -> std::io::Result<()> {
     let max_depth = 50;
 
     //World
+    let binding = Color::new(0.8, 0.8, 0.8);
+    let material_ground = Material::Lambertian(binding);
+    let binding = Color::new(0.7, 0.3, 0.3);
+    let material_center = Material::Lambertian(binding);
+    let binding = Color::new(0.8, 0.8, 0.8);
+    let material_left = Material::Metal {
+        color: binding,
+        fuzz: 0.0,
+    };
+    let binding = Color::new(0.8, 0.6, 0.2);
+    let material_right = Material::Metal {
+        color: binding,
+        fuzz: 0.0,
+    };
+
     let world = HittableList {
         objects: vec![
             Hittable::S(Sphere {
-                center: Vec3::new(0.0, 0.0, -1.0),
-                radius: 0.5,
+                center: Vec3::new(0.0, 100.5, -1.0),
+                radius: 100.0,
+                mat: material_ground,
             }),
             Hittable::S(Sphere {
-                center: Vec3::new(0.0, -100.5, -1.0),
-                radius: 100.0,
+                center: Vec3::new(0.0, 0.0, -1.0),
+                radius: 0.5,
+                mat: material_center,
+            }),
+            Hittable::S(Sphere {
+                center: Vec3::new(-1.0, 0.0, -1.0),
+                radius: 0.5,
+                mat: material_left,
+            }),
+            Hittable::S(Sphere {
+                center: Vec3::new(1.0, 0.0, -1.0),
+                radius: 0.5,
+                mat: material_right,
             }),
         ],
     };
@@ -80,6 +109,8 @@ fn write_colors<W: Write>(
 }
 
 fn ray_color(r: Ray, world: &hittable::HittableList, depth: u32) -> Vec3 {
+    let c = Color::new(0.0, 0.0, 0.0);
+
     if depth <= 0 {
         return Color {
             x: 0.0,
@@ -91,21 +122,12 @@ fn ray_color(r: Ray, world: &hittable::HittableList, depth: u32) -> Vec3 {
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
         //let k = Vec3::multiply(Vec3::add(rec.normal, Color::new(1.0, 1.0, 1.0)), 0.5);
         //return k;
-        let target: Point3 = Vec3::add(
-            Vec3::add(rec.p, rec.normal),
-            Vec3::random_in_hemisphere(rec.normal),
-        );
-        return Vec3::multiply(
-            ray_color(
-                Ray {
-                    direction: (Vec3::sub(target, rec.p)),
-                    origin: (rec.p),
-                },
-                world,
-                depth - 1,
-            ),
-            0.5,
-        );
+        let mut scattered = Ray::new(c, c);
+        let mut attenuation = c;
+        if rec.mat.scatter(r, rec, &mut attenuation, &mut scattered) {
+            return Vec3::times(attenuation, ray_color(scattered, world, depth - 1));
+        }
+        return Color::new(0.0, 0.0, 0.0);
     } else {
         let unit_direction = Vec3::unit_vector(r.direction);
         let t = 0.5 * (unit_direction.y + 1.0);

@@ -1,4 +1,5 @@
 use crate::hittable::HitRecord;
+use crate::material::Material;
 use crate::ray::Ray;
 use crate::vec3::Point3;
 use crate::vec3::Vec3;
@@ -6,6 +7,7 @@ use crate::vec3::Vec3;
 pub struct Sphere {
     pub center: Point3,
     pub radius: f64,
+    pub mat: Material,
 }
 
 impl Sphere {
@@ -34,6 +36,7 @@ impl Sphere {
             p,
             normal: Vec3::new(0.0, 0.0, 0.0),
             front_face: false,
+            mat: &self.mat,
         };
         let outward_normal = Vec3::divide(Vec3::sub(p, self.center), self.radius);
         rec.set_face_normal(*r, outward_normal);
