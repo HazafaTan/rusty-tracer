@@ -18,9 +18,8 @@ impl Material {
     ) -> bool {
         match self {
             Material::Lambertian(albedo) => {
-                let mut scatter_direction = Vec3::add(rec.normal, Vec3::random_unit_vector());
-
-                if Vec3::near_zero(scatter_direction) {
+                let mut scatter_direction = rec.normal + Vec3::random_unit_vector();
+                if scatter_direction.near_zero() {
                     scatter_direction = rec.normal;
                 }
                 *scattered = Ray::new(rec.p, scatter_direction);

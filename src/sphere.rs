@@ -12,10 +12,10 @@ pub struct Sphere {
 
 impl Sphere {
     pub fn hit(&self, r: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
-        let oc = Vec3::sub(r.origin, self.center);
-        let a = Vec3::square_length(r.direction);
+        let oc = r.origin - self.center;
+        let a = r.direction.square_length();
         let half_b = Vec3::dot(oc, r.direction);
-        let c = Vec3::square_length(oc) - self.radius * self.radius;
+        let c = oc.square_length() - self.radius * self.radius;
 
         let discriminant = (half_b * half_b) - (a * c);
         if discriminant < 0.0 {
@@ -38,7 +38,7 @@ impl Sphere {
             front_face: false,
             mat: &self.mat,
         };
-        let outward_normal = Vec3::divide(Vec3::sub(p, self.center), self.radius);
+        let outward_normal = (p - self.center) / self.radius;
         rec.set_face_normal(*r, outward_normal);
         Some(rec)
     }

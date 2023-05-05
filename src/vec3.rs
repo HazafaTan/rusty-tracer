@@ -57,50 +57,13 @@ impl Vec3 {
         Vec3 { x, y, z }
     }
 
-    pub fn length(v: Vec3) -> f64 {
-        return Self::square_length(v).sqrt();
+    pub fn length(self) -> f64 {
+        return self.square_length().sqrt();
     }
 
-    pub fn square_length(v: Vec3) -> f64 {
-        return v.x * v.x + v.y * v.y + v.z * v.z;
-    }
-
-    pub fn add(v1: Vec3, v2: Vec3) -> Vec3 {
-        return Vec3 {
-            x: v1.x + v2.x,
-            y: v1.y + v2.y,
-            z: v1.z + v2.z,
-        };
-    }
-
-    pub fn times(v1: Vec3, v2: Vec3) -> Vec3 {
-        return Vec3 {
-            x: v1.x * v2.x,
-            y: v1.y * v2.y,
-            z: v1.z * v2.z,
-        };
-    }
-    pub fn multiply(v1: Vec3, t: f64) -> Vec3 {
-        return Vec3 {
-            x: v1.x * t,
-            y: v1.y * t,
-            z: v1.z * t,
-        };
-    }
-    pub fn divide(v1: Vec3, t: f64) -> Vec3 {
-        return Vec3 {
-            x: v1.x / t,
-            y: v1.y / t,
-            z: v1.z / t,
-        };
-    }
-
-    pub fn sub(v1: Vec3, v2: Vec3) -> Vec3 {
-        return Vec3 {
-            x: (v1.x - v2.x),
-            y: (v1.y - v2.y),
-            z: (v1.z - v2.z),
-        };
+    pub fn square_length(self) -> f64 {
+        let new = self * self;
+        return new.x + new.y + new.z;
     }
 
     pub fn cross(v1: Vec3, v2: Vec3) -> Vec3 {
@@ -121,11 +84,12 @@ impl Vec3 {
     }
 
     pub fn dot(v1: Vec3, v2: Vec3) -> f64 {
-        return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+        let new = v1 * v2;
+        return new.x + new.y + new.z;
     }
 
-    pub fn unit_vector(v: Vec3) -> Vec3 {
-        return Self::divide(v, Self::length(v));
+    pub fn unit_vector(self) -> Vec3 {
+        return self / self.length();
     }
     pub fn random_vec3() -> Vec3 {
         return Vec3 {
@@ -144,14 +108,14 @@ impl Vec3 {
     pub fn random_in_unit_sphere() -> Vec3 {
         loop {
             let p = Vec3::random_vec3s(-1.0, 1.0);
-            if Self::square_length(p) >= 1.0 {
+            if p.square_length() >= 1.0 {
                 continue;
             }
             return p;
         }
     }
     pub fn random_unit_vector() -> Vec3 {
-        return Self::unit_vector(Self::random_in_unit_sphere());
+        return Self::random_in_unit_sphere().unit_vector();
     }
 
     pub fn random_in_hemisphere(v: Vec3) -> Vec3 {
@@ -162,15 +126,12 @@ impl Vec3 {
             return -(in_unit_sphere);
         }
     }
-    pub fn near_zero(v: Vec3) -> bool {
+    pub fn near_zero(self) -> bool {
         let s = 1e-8;
-        return (v.x.abs() < s) && (v.y.abs() < s) && (v.z.abs() < s);
+        return (self.x.abs() < s) && (self.y.abs() < s) && (self.z.abs() < s);
     }
     pub fn reflect(v: Vec3, normal: Vec3) -> Vec3 {
-        let dot = Self::dot(v, normal);
-        let c = Self::multiply(normal, 2.0 * dot);
-        let j = Self::sub(v, c);
-        return j;
+        return v - (normal * 2.0 * Self::dot(v, normal));
     }
 }
 

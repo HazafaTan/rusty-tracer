@@ -14,6 +14,6 @@ impl Ray {
     }
 
     pub fn at(t: f64, r: Ray) -> Vec3 {
-        Vec3::add(r.origin, Vec3::multiply(r.direction, t))
+        r.origin + (r.direction * t)
     }
 }

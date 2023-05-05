@@ -81,7 +81,7 @@ fn main() -> std::io::Result<()> {
                 let u: f64 = (j as f64 + random_float()) / ((image_width - 1) as f64);
                 let v: f64 = (i as f64 + random_float()) / ((image_height - 1) as f64);
                 let r = camera.get_ray(u, v);
-                pixel_color = Vec3::add(pixel_color, ray_color(r, &world, max_depth));
+                pixel_color = pixel_color + ray_color(r, &world, max_depth);
             }
             write_colors(&mut file, pixel_color, samples_per_pixel)?;
         }
@@ -130,14 +130,11 @@ fn ray_color(r: Ray, world: &hittable::HittableList, depth: u32) -> Vec3 {
         let mut scattered = Ray::new(c, c);
         let mut attenuation = c;
         if rec.mat.scatter(r, rec, &mut attenuation, &mut scattered) {
-            return Vec3::times(attenuation, ray_color(scattered, world, depth - 1));
+            return attenuation * ray_color(scattered, world, depth - 1);
         }
         return Color::new(0.0, 0.0, 0.0);
     }
-    let unit_direction = Vec3::unit_vector(r.direction);
+    let unit_direction = r.direction.unit_vector();
     let t = 0.5 * (unit_direction.y + 1.0);
-    return Vec3::add(
-        Vec3::multiply(Color::new(0.5, 0.7, 1.), t),
-        Vec3::multiply(Color::new(1.0, 1.0, 1.0), 1.0 - t),
-    );
+    return Color::new(0.5, 0.7, 1.0) * t + Color::new(1.0, 1.0, 1.0) * (1.0 - t);
 }

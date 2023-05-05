@@ -18,7 +18,7 @@ impl HitRecord<'_> {
         self.normal = if self.front_face {
             outward_normal
         } else {
-            Vec3::multiply(outward_normal, -1.0)
+            outward_normal * -1.0
         };
     }
 }
