@@ -31,11 +31,10 @@ impl Material {
                 color: albedo,
                 fuzz: _,
             } => {
-                let reflected =
-                    Vec3::reflect(Vec3::unit_vector(r.direction.normalize()), rec.normal);
+                let reflected = Vec3::reflect(r.direction, rec.normal);
                 *scattered = Ray::new(rec.p, reflected);
                 *attenuation = *albedo;
-                return Vec3::dot(reflected, rec.normal) > 0.0;
+                return Vec3::dot(scattered.direction, rec.normal) > 0.0;
             }
         }
     }

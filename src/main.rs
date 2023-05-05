@@ -12,10 +12,15 @@ use ray::Ray;
 use sphere::Sphere;
 use std::fs::File;
 use std::io::prelude::Write;
-use vec3::{Color, Point3, Vec3};
+use vec3::{Color, Vec3};
 mod material;
 
 fn main() -> std::io::Result<()> {
+    let a = Vec3::new(1.0, 2.0, 3.0);
+    let b = Vec3::new(4.0, 5.0, 6.0);
+    let c = a + b;
+
+    print!("{}", c);
     //Image
     let aspect_ratio: f64 = 16.0 / 9.0;
     let samples_per_pixel: u64 = 100;
@@ -24,7 +29,7 @@ fn main() -> std::io::Result<()> {
     let max_depth = 50;
 
     //World
-    let binding = Color::new(0.8, 0.8, 0.8);
+    let binding = Color::new(0.8, 0.8, 0.0);
     let material_ground = Material::Lambertian(binding);
     let binding = Color::new(0.7, 0.3, 0.3);
     let material_center = Material::Lambertian(binding);
@@ -42,7 +47,7 @@ fn main() -> std::io::Result<()> {
     let world = HittableList {
         objects: vec![
             Hittable::S(Sphere {
-                center: Vec3::new(0.0, 100.5, -1.0),
+                center: Vec3::new(0.0, -100.5, -1.0),
                 radius: 100.0,
                 mat: material_ground,
             }),
@@ -128,12 +133,11 @@ fn ray_color(r: Ray, world: &hittable::HittableList, depth: u32) -> Vec3 {
             return Vec3::times(attenuation, ray_color(scattered, world, depth - 1));
         }
         return Color::new(0.0, 0.0, 0.0);
-    } else {
-        let unit_direction = Vec3::unit_vector(r.direction);
-        let t = 0.5 * (unit_direction.y + 1.0);
-        return Vec3::add(
-            Vec3::multiply(Color::new(0.5, 0.7, 1.), t),
-            Vec3::multiply(Color::new(1.0, 1.0, 1.0), 1.0 - t),
-        );
     }
+    let unit_direction = Vec3::unit_vector(r.direction);
+    let t = 0.5 * (unit_direction.y + 1.0);
+    return Vec3::add(
+        Vec3::multiply(Color::new(0.5, 0.7, 1.), t),
+        Vec3::multiply(Color::new(1.0, 1.0, 1.0), 1.0 - t),
+    );
 }
