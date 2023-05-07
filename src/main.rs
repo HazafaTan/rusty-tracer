@@ -16,11 +16,6 @@ use vec3::{Color, Vec3};
 mod material;
 
 fn main() -> std::io::Result<()> {
-    let a = Vec3::new(1.0, 2.0, 3.0);
-    let b = Vec3::new(4.0, 5.0, 6.0);
-    let c = a + b;
-
-    print!("{}", c);
     //Image
     let aspect_ratio: f64 = 16.0 / 9.0;
     let samples_per_pixel: u64 = 100;
