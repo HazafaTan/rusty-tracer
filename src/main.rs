@@ -24,19 +24,23 @@ fn main() -> std::io::Result<()> {
     let max_depth = 50;
 
     //World
+
+
     let binding = Color::new(0.8, 0.8, 0.0);
     let material_ground = Material::Lambertian(binding);
-    let binding = Color::new(0.7, 0.3, 0.3);
+    let binding = Color::new(0.1, 0.2, 0.5);
     let material_center = Material::Lambertian(binding);
-    let binding = Color::new(0.8, 0.8, 0.8);
-    let material_left = Material::Metal {
-        color: binding,
-        fuzz: 0.3,
+    //let binding = Color::new(0.8, 0.8, 0.8);
+    let material_left = Material::Dielectric {
+        ir: 1.5,
+    };
+    let material_left2 = Material::Dielectric {
+        ir: 1.5,
     };
     let binding = Color::new(0.8, 0.6, 0.2);
     let material_right = Material::Metal {
         color: binding,
-        fuzz: 1.0,
+        fuzz: 0.0,
     };
 
     let world = HittableList {
@@ -60,6 +64,11 @@ fn main() -> std::io::Result<()> {
                 center: Vec3::new(1.0, 0.0, -1.0),
                 radius: 0.5,
                 mat: material_right,
+            }),
+            Hittable::S(Sphere {
+                center: Vec3::new(-1.0, 0.0, -1.0),
+                radius: -0.4,
+                mat: material_left2,
             }),
         ],
     };

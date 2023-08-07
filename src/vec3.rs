@@ -48,6 +48,8 @@ impl std::ops::Mul<&f64> for Vec3 {
     }
 }
 
+
+
 // Implement Mul for Vec3 and &f64 (reverse order)
 impl std::ops::Mul<Vec3> for &f64 {
     type Output = Vec3;
@@ -150,6 +152,13 @@ impl Vec3 {
     }
     pub fn reflect(v: Vec3, normal: Vec3) -> Vec3 {
         return v - (normal * 2.0 * Self::dot(v, normal));
+    }
+
+    pub fn refract(uv: Vec3, n: Vec3, etai_over_etat: f64) -> Vec3 {
+        let cos_theta = Self::dot(-uv, n).min( 1.0);
+        let r_out_parallel = (uv + n * cos_theta) * etai_over_etat;
+        let r_out_perp = n * -(1.0 - r_out_parallel.square_length()).sqrt();
+        return r_out_perp + r_out_parallel;
     }
 }
 
