@@ -2,19 +2,19 @@ mod camera;
 mod hittable;
 mod ray;
 mod rtweekend;
-use material::Material;
-use rtweekend::{clamp, random_float};
 mod sphere;
 mod vec3;
+mod material;
+
+use rtweekend::{clamp, random_float};
 use camera::Camera;
 use hittable::{Hittable, HittableList};
 use ray::Ray;
 use sphere::Sphere;
+use vec3::{Color, Vec3, Point3};
+use material::Material;
 use std::fs::File;
 use std::io::prelude::Write;
-use vec3::{Color, Vec3, Point3};
-mod material;
-
 fn main() -> std::io::Result<()> {
     //Image
     let aspect_ratio: f64 = 16.0 / 9.0;
