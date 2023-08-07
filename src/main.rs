@@ -18,67 +18,88 @@ mod material;
 fn main() -> std::io::Result<()> {
     //Image
     let aspect_ratio: f64 = 16.0 / 9.0;
-    let samples_per_pixel: u64 = 100;
-    let image_width: u16 = 400;
+    let samples_per_pixel: u64 = 500;
+    let image_width: u16 = 1200;
     let image_height: u16 = (image_width as f64 / aspect_ratio) as u16;
     let max_depth = 50;
 
     //World
-     let binding = Color::new(0.8, 0.8, 0.0);
-    let material_ground = Material::Lambertian(binding);
-    let binding = Color::new(0.1, 0.2, 0.5);
-    let material_center = Material::Lambertian(binding);
-    //let binding = Color::new(0.8, 0.8, 0.8);
-    let material_left = Material::Dielectric {
-        ir: 1.5,
+    let mut world = HittableList {
+        objects: Vec::new(),
     };
-    let material_left2 = Material::Dielectric {
-        ir: 1.5,
-    };
-    let binding = Color::new(0.8, 0.6, 0.2);
-    let material_right = Material::Metal {
-        color: binding,
-        fuzz: 0.0,
+    let material_ground = Material::Lambertian(Color::new(0.5, 0.5, 0.5));
+    
+    let ground_sphere = 
+    Sphere {
+        center: Point3::new(0.0, -1000.0, 0.0),
+        radius: 1000.0,
+        mat: material_ground,
     };
 
-    let world = HittableList {
-        objects: vec![
-            Hittable::S(Sphere {
-                center: Vec3::new(0.0, -100.5, -1.0),
-                radius: 100.0,
-                mat: material_ground,
-            }),
-            Hittable::S(Sphere {
-                center: Vec3::new(0.0, 0.0, -1.0),
-                radius: 0.5,
-                mat: material_center,
-            }),
-            Hittable::S(Sphere {
-                center: Vec3::new(-1.0, 0.0, -1.0),
-                radius: 0.5,
-                mat: material_left,
-            }),
-            Hittable::S(Sphere {
-                center: Vec3::new(1.0, 0.0, -1.0),
-                radius: 0.5,
-                mat: material_right,
-            }),
-            Hittable::S(Sphere {
-                center: Vec3::new(-1.0, 0.0, -1.0),
-                radius: -0.4,
-                mat: material_left2,
-            }),
-        ],
+    world.objects.push(hittable::Hittable::S(ground_sphere));
+
+    for i in  -11..11{
+        for j in -11..11{
+            let choose_mat = random_float();
+            let center = Point3::new(i as f64 + 0.9 * random_float(), 0.2, j as f64 + 0.9 * random_float());
+            if choose_mat< 0.8 {
+                let albedo = Color::random_vec3s(0.0,1.0) * Color::random_vec3s(0.0,1.0);
+                let sphere_material = Material::Lambertian(albedo);
+                world.objects.push(Hittable::S(Sphere {
+                    center,
+                    radius: 0.2,
+                    mat: sphere_material,
+                }));
+            }else if choose_mat < 0.95 {
+                let albedo = Color::random_vec3s(0.5,1.0);
+                let fuzz = random_float() * 0.5;
+                let sphere_material = Material::Metal{color: albedo, fuzz};
+                world.objects.push(Hittable::S(Sphere {
+                    center,
+                    radius: 0.2,
+                    mat: sphere_material,
+                }));
+            }else{
+                let sphere_material = Material::Dielectric{ir: 1.5};
+                world.objects.push(Hittable::S(Sphere {
+                    center,
+                    radius: 0.2,
+                    mat: sphere_material,
+                }));
+            }
+        }
+
+    }
+    
+    let material1 = Material::Dielectric{ir: 1.5};
+    world.objects.push(Hittable::S(Sphere {
+        center: Point3::new(0.0, 1.0, 0.0),
+        radius: 1.0,
+        mat: material1,
+    }));
+    let material2 = Material::Lambertian(Color::new(0.4, 0.2, 0.1));
+    world.objects.push(Hittable::S(Sphere {
+        center: Point3::new(-4.0, 1.0, 0.0),
+        radius: 1.0,
+        mat: material2,
+    }));
+    let material3 = Material::Metal {
+        color: Color::new(0.7, 0.6, 0.5),
+        fuzz: 0.0,
     };
+    world.objects.push(Hittable::S(Sphere {
+        center: Point3::new(4.0, 1.0, 0.0),
+        radius: 1.0,
+        mat: material3,
+    }));
 
     // Camera
 
-    let lookfrom = Point3::new(3.0, 3.0, 2.0);
-    let lookat = Point3::new(0.0, 0.0, -1.0);
+    let lookfrom = Point3::new(13.0, 2.0, 3.0);
+    let lookat = Point3::new(0.0, 0.0, 0.0);
     let vup = Vec3::new(0.0, 1.0, 0.0);
-    let dist_to_focus = (lookfrom - lookat).length();
-    let defocus_angle = 2.0;
-
+    let dist_to_focus = 10.0;
+    let defocus_angle = 0.1;
 
 
     let camera: Camera = Camera::new(
