@@ -10,10 +10,9 @@ use camera::Camera;
 use hittable::{Hittable, HittableList};
 use ray::Ray;
 use sphere::Sphere;
-use std::f32::consts::PI;
 use std::fs::File;
 use std::io::prelude::Write;
-use vec3::{Color, Vec3};
+use vec3::{Color, Vec3, Point3};
 mod material;
 
 fn main() -> std::io::Result<()> {
@@ -25,8 +24,6 @@ fn main() -> std::io::Result<()> {
     let max_depth = 50;
 
     //World
-
-    /**
      let binding = Color::new(0.8, 0.8, 0.0);
     let material_ground = Material::Lambertian(binding);
     let binding = Color::new(0.1, 0.2, 0.5);
@@ -73,9 +70,10 @@ fn main() -> std::io::Result<()> {
             }),
         ],
     };
-     * 
-     * 
-     */
+
+
+
+    /* 
     let r: f64 = (PI / 4.0).into();
     let binding = Color::new(0.0, 0.0, 1.0);
     let material_left = Material::Lambertian(binding);
@@ -95,10 +93,26 @@ fn main() -> std::io::Result<()> {
             }),
         ],
     };
-    
+    */
 
     // Camera
-    let camera = Camera::default();
+
+    let lookfrom = Point3::new(3.0, 3.0, 2.0);
+    let lookat = Point3::new(0.0, 0.0, -1.0);
+    let vup = Vec3::new(0.0, 1.0, 0.0);
+    let dist_to_focus = (lookfrom - lookat).length();
+    let defocus_angle = 2.0;
+
+
+
+    let camera: Camera = Camera::new(
+        lookfrom,
+        lookat,
+        vup,
+        20.0, 
+        aspect_ratio,
+        defocus_angle,
+        dist_to_focus);
 
     let mut file = File::create("out.ppm")?;
     file.write_all(format!("P3\n{} {}\n255\n", image_width, image_height).as_bytes())?;
