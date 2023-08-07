@@ -4,20 +4,15 @@ Rusty Tracer is a CPU-based Ray Tracer written in the Rust programming language.
 
 ## Features
 
-- Support for basic geometric primitives: spheres, planes, and triangles.
-- Phong shading model for realistic lighting.
+- Support for basic geometric primitives such as spheres.
 - Soft shadows and reflections.
 - Anti-aliasing for smoother images.
 - Multithreading for faster rendering.
-- Customizable camera and scene settings.
 
-## Getting Started
+# Results
 
-Follow these instructions to get a copy of the project up and running on your local machine.
+![MEOWFINALRENDER](https://github.com/HazafaTan/rusty-tracer/assets/48661942/f3fb28ae-58ec-40cd-8daa-95cf7de760a3)
 
-### Prerequisites
-
-- Rust programming language (stable version). If you don't have Rust installed, you can download it from [https://www.rust-lang.org/](https://www.rust-lang.org/).
 
 ## Acknowledgments
 
@@ -28,5 +23,5 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 If you have any questions, suggestions, or just want to say hi, feel free to contact me.
 
-We hope you enjoy using Rusty Tracer to create beautiful ray-traced images! Happy rendering! 🚀
+Happy rendering! 🚀
 
