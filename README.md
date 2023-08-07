@@ -1,4 +1,4 @@
-# Rusty Tracer - CPU-based Ray Tracer in Rust
+# Rusty Tracer - CPU-based Ray Tracer in Rust (Work in Progress)
 
 Rusty Tracer is a CPU-based Ray Tracer written in the Rust programming language. This project aims to provide a simple, yet efficient implementation of a ray tracer that can render stunning 3D scenes using the principles of ray tracing.
 
