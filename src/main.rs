@@ -168,8 +168,6 @@ fn ray_color(r: Ray, world: &hittable::HittableList, depth: u32) -> Vec3 {
     }
 
     if let Some(rec) = world.hit(r, 0.001, f64::INFINITY) {
-        //let k = Vec3::multiply(Vec3::add(rec.normal, Color::new(1.0, 1.0, 1.0)), 0.5);
-        //return k;
         let mut scattered = Ray::new(c, c);
         let mut attenuation = c;
         if rec.mat.scatter(r, rec, &mut attenuation, &mut scattered) {
