@@ -71,30 +71,6 @@ fn main() -> std::io::Result<()> {
         ],
     };
 
-
-
-    /* 
-    let r: f64 = (PI / 4.0).into();
-    let binding = Color::new(0.0, 0.0, 1.0);
-    let material_left = Material::Lambertian(binding);
-    let binding = Color::new(1.0, 0.0, 0.0);
-    let material_right = Material::Lambertian(binding);
-    let world = HittableList {
-        objects: vec![
-            Hittable::S(Sphere {
-                center: Vec3::new(-r, 0.0, -1.0),
-                radius: r,
-                mat: material_left,
-            }),
-            Hittable::S(Sphere {
-                center: Vec3::new(r, 0.0, -1.0),
-                radius: r,
-                mat: material_right,
-            }),
-        ],
-    };
-    */
-
     // Camera
 
     let lookfrom = Point3::new(3.0, 3.0, 2.0);
