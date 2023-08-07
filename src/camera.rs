@@ -37,7 +37,8 @@ impl Default for Camera {
 }
 
 impl Camera {
-    fn new(origin: Vec3, horizontal: Vec3, vertical: Vec3, lower_left_corner: Vec3) -> Camera {
+    /**
+         fn new(origin: Vec3, horizontal: Vec3, vertical: Vec3, lower_left_corner: Vec3) -> Camera {
         Camera {
             origin: (origin),
             horizontal: (horizontal),
@@ -45,6 +46,7 @@ impl Camera {
             lower_left_corner: (lower_left_corner),
         }
     }
+     */
     pub fn get_ray(&self, u: f64, v: f64) -> ray::Ray {
         ray::Ray::new(
             self.lower_left_corner + self.horizontal * u + self.vertical * v - self.origin,

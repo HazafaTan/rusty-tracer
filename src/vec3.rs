@@ -39,6 +39,24 @@ impl Mul<f64> for Vec3 {
     }
 }
 
+
+// Implement Mul for &f64 and Vec3
+impl std::ops::Mul<&f64> for Vec3 {
+    type Output = Vec3;
+    fn mul(self, t: &f64) -> Vec3 {
+        Vec3::new(self.x * *t, self.y * *t, self.z * *t)
+    }
+}
+
+// Implement Mul for Vec3 and &f64 (reverse order)
+impl std::ops::Mul<Vec3> for &f64 {
+    type Output = Vec3;
+    fn mul(self, v: Vec3) -> Vec3 {
+        Vec3::new(self * v.x, self * v.y, self * v.z)
+    }
+}
+
+
 impl Div<f64> for Vec3 {
     type Output = Vec3;
     fn div(self, t: f64) -> Self::Output {

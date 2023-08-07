@@ -15,14 +15,15 @@ impl Sphere {
         let oc = r.origin - self.center;
         let a = r.direction.square_length();
         let half_b = Vec3::dot(oc, r.direction);
-        let c = oc.square_length() - self.radius * self.radius;
+        let c = oc.square_length() - (self.radius * self.radius);
 
-        let discriminant = (half_b * half_b) - (a * c);
+        let discriminant = half_b.powi(2) - a * c;
         if discriminant < 0.0 {
             return None;
         }
+
+        // Find the nearest root that lies in the acceptable range
         let sqrtd = discriminant.sqrt();
-        //Find the nearest root that lies in the acceptable range
         let mut root = (-half_b - sqrtd) / a;
         if root < t_min || t_max < root {
             root = (-half_b + sqrtd) / a;
@@ -30,16 +31,22 @@ impl Sphere {
                 return None;
             }
         }
+
         let p = Ray::at(root, *r);
-        let mut rec = HitRecord {
+        let outward_normal = (p - self.center) / self.radius;
+        let front_face = Vec3::dot(outward_normal, r.direction) < 0.0;
+        let normal = if front_face {
+            outward_normal
+        } else {
+            -outward_normal
+        };
+
+        Some(HitRecord {
             t: root,
             p,
-            normal: Vec3::new(0.0, 0.0, 0.0),
-            front_face: false,
-            mat: &self.mat,
-        };
-        let outward_normal = (p - self.center) / self.radius;
-        rec.set_face_normal(*r, outward_normal);
-        Some(rec)
+            normal,
+            front_face,
+            mat: &self.mat, // Assuming self.mat is the material of the sphere
+        })
     }
 }

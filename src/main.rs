@@ -31,12 +31,12 @@ fn main() -> std::io::Result<()> {
     let binding = Color::new(0.8, 0.8, 0.8);
     let material_left = Material::Metal {
         color: binding,
-        fuzz: 0.0,
+        fuzz: 0.3,
     };
     let binding = Color::new(0.8, 0.6, 0.2);
     let material_right = Material::Metal {
         color: binding,
-        fuzz: 0.0,
+        fuzz: 1.0,
     };
 
     let world = HittableList {
@@ -106,7 +106,11 @@ fn write_colors<W: Write>(
         (256.0 * clamp(g, 0.0, 0.999)) as i32,
         (256.0 * clamp(b, 0.0, 0.999)) as i32,
     )
+    
 }
+
+
+
 
 fn ray_color(r: Ray, world: &hittable::HittableList, depth: u32) -> Vec3 {
     let c = Color::new(0.0, 0.0, 0.0);
@@ -133,3 +137,4 @@ fn ray_color(r: Ray, world: &hittable::HittableList, depth: u32) -> Vec3 {
     let t = 0.5 * (unit_direction.y + 1.0);
     return Color::new(0.5, 0.7, 1.0) * t + Color::new(1.0, 1.0, 1.0) * (1.0 - t);
 }
+

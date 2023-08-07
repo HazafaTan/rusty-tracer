@@ -13,7 +13,8 @@ pub struct HitRecord<'a> {
 }
 
 impl HitRecord<'_> {
-    pub fn set_face_normal(&mut self, r: Ray, outward_normal: Vec3) -> () {
+    /*
+     pub fn set_face_normal(&mut self, r: Ray, outward_normal: Vec3) -> () {
         self.front_face = Vec3::dot(r.direction, outward_normal) < 0.0;
         self.normal = if self.front_face {
             outward_normal
@@ -21,6 +22,8 @@ impl HitRecord<'_> {
             outward_normal * -1.0
         };
     }
+     */
+   
 }
 pub enum Hittable {
     S(Sphere),
