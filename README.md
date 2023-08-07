@@ -9,7 +9,7 @@ Rusty Tracer is a CPU-based Ray Tracer written in the Rust programming language.
 - Anti-aliasing for smoother images.
 - Multithreading for faster rendering.
 
-# Results
+## Results
 
 ![MEOWFINALRENDER](https://github.com/HazafaTan/rusty-tracer/assets/48661942/f3fb28ae-58ec-40cd-8daa-95cf7de760a3)
 
