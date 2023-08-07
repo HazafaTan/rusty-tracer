@@ -21,8 +21,6 @@ impl Sphere {
         if discriminant < 0.0 {
             return None;
         }
-
-        // Find the nearest root that lies in the acceptable range
         let sqrtd = discriminant.sqrt();
         let mut root = (-half_b - sqrtd) / a;
         if root < t_min || t_max < root {
@@ -46,7 +44,7 @@ impl Sphere {
             p,
             normal,
             front_face,
-            mat: &self.mat, // Assuming self.mat is the material of the sphere
+            mat: &self.mat,
         })
     }
 }
