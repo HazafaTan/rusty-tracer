@@ -1,7 +1,7 @@
 use crate::ray;
 use crate::vec3::Point3;
 use crate::vec3::Vec3;
-
+use std::f64::consts::PI;
 pub struct Camera {
     pub origin: Point3,
     pub horizontal: Vec3,
@@ -49,16 +49,3 @@ impl Camera {
     }
 }
 
-use std::f64::consts::PI;
-use std::fmt;
-
-impl fmt::Display for Camera {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Camera {{\n")?;
-        write!(f, "  origin: {}\n", self.origin)?;
-        write!(f, "  horizontal: {}\n", self.horizontal)?;
-        write!(f, "  vertical: {}\n", self.vertical)?;
-        write!(f, "  lower_left_corner: {}\n", self.lower_left_corner)?;
-        write!(f, "}}")
-    }
-}
