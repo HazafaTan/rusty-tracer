@@ -6,20 +6,24 @@ mod sphere;
 mod vec3;
 mod material;
 
-use rtweekend::{clamp, random_float};
+use rtweekend::random_float;
 use camera::Camera;
 use hittable::{Hittable, HittableList};
 use ray::Ray;
 use sphere::Sphere;
 use vec3::{Color, Vec3, Point3};
 use material::Material;
-use std::fs::File;
-use std::io::prelude::Write;
+
+
+
+
+use image::{ImageBuffer, Rgb};
+
 fn main() -> std::io::Result<()> {
     //Image
     let aspect_ratio: f64 = 16.0 / 9.0;
-    let samples_per_pixel: u64 = 500;
-    let image_width: u16 = 1200;
+    let samples_per_pixel: u64 = 50;
+    let image_width: u16 = 400;
     let image_height: u16 = (image_width as f64 / aspect_ratio) as u16;
     let max_depth = 50;
 
@@ -111,28 +115,31 @@ fn main() -> std::io::Result<()> {
         defocus_angle,
         dist_to_focus);
 
-    let mut file = File::create("out.ppm")?;
-    file.write_all(format!("P3\n{} {}\n255\n", image_width, image_height).as_bytes())?;
+    //Render
+    let mut image = ImageBuffer::new(image_width as u32, image_height as u32);
     for i in (0..image_height).rev() {
         for j in 0..image_width {
             let mut pixel_color = Color::new(0.0, 0.0, 0.0);
             for _ in 0..samples_per_pixel {
                 let u: f64 = (j as f64 + random_float()) / ((image_width - 1) as f64);
-                let v: f64 = (i as f64 + random_float()) / ((image_height - 1) as f64);
+                let v: f64 = ((image_height - 1 - i) as f64 + random_float()) / ((image_height - 1) as f64);
                 let r = camera.get_ray(u, v);
                 pixel_color = pixel_color + ray_color(r, &world, max_depth);
             }
-            write_colors(&mut file, pixel_color, samples_per_pixel)?;
+            write_colors(&mut image, pixel_color, samples_per_pixel,j as u32,i as u32);
         }
     }
+    let _ = image.save("out.png");
     Ok(())
 }
 
-fn write_colors<W: Write>(
-    out: &mut W,
+fn write_colors(
+    image: &mut ImageBuffer<Rgb<u8>, Vec<u8>>,
     pixel_color: Color,
     samples_per_pixel: u64,
-) -> std::io::Result<()> {
+    x: u32,
+    y: u32,
+)  {
     let mut r = pixel_color.x;
     let mut g = pixel_color.y;
     let mut b = pixel_color.z;
@@ -143,13 +150,12 @@ fn write_colors<W: Write>(
     g = (scale * g).sqrt();
     b = (scale * b).sqrt();
 
-    write!(
-        out,
-        "{} {} {}\n",
-        (256.0 * clamp(r, 0.0, 0.999)) as i32,
-        (256.0 * clamp(g, 0.0, 0.999)) as i32,
-        (256.0 * clamp(b, 0.0, 0.999)) as i32,
-    )
+    let ir = (256.0 * r.min(0.999)) as u8;
+    let ig = (256.0 * g.min(0.999)) as u8;
+    let ib = (256.0 * b.min(0.999)) as u8;
+
+
+    image.put_pixel(x, y, Rgb([ir, ig, ib]));
     
 }
 
