@@ -13,11 +13,8 @@ use ray::Ray;
 use sphere::Sphere;
 use vec3::{Color, Vec3, Point3};
 use material::Material;
-
-
-
-
 use image::{ImageBuffer, Rgb};
+
 
 fn main() -> std::io::Result<()> {
     //Image
@@ -39,9 +36,7 @@ fn main() -> std::io::Result<()> {
         radius: 1000.0,
         mat: material_ground,
     };
-
     world.objects.push(hittable::Hittable::S(ground_sphere));
-
     for i in  -11..11{
         for j in -11..11{
             let choose_mat = random_float();
@@ -74,7 +69,6 @@ fn main() -> std::io::Result<()> {
         }
 
     }
-    
     let material1 = Material::Dielectric{ir: 1.5};
     world.objects.push(Hittable::S(Sphere {
         center: Point3::new(0.0, 1.0, 0.0),
@@ -98,13 +92,11 @@ fn main() -> std::io::Result<()> {
     }));
 
     // Camera
-
     let lookfrom = Point3::new(13.0, 2.0, 3.0);
     let lookat = Point3::new(0.0, 0.0, 0.0);
     let vup = Vec3::new(0.0, 1.0, 0.0);
     let dist_to_focus = 10.0;
     let defocus_angle = 0.1;
-
 
     let camera: Camera = Camera::new(
         lookfrom,
@@ -154,13 +146,8 @@ fn write_colors(
     let ig = (256.0 * g.min(0.999)) as u8;
     let ib = (256.0 * b.min(0.999)) as u8;
 
-
     image.put_pixel(x, y, Rgb([ir, ig, ib]));
-    
 }
-
-
-
 
 fn ray_color(r: Ray, world: &hittable::HittableList, depth: u32) -> Vec3 {
     let c = Color::new(0.0, 0.0, 0.0);
@@ -185,4 +172,3 @@ fn ray_color(r: Ray, world: &hittable::HittableList, depth: u32) -> Vec3 {
     let t = 0.5 * (unit_direction.y + 1.0);
     return Color::new(0.5, 0.7, 1.0) * t + Color::new(1.0, 1.0, 1.0) * (1.0 - t);
 }
-
