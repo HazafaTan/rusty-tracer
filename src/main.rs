@@ -6,7 +6,7 @@ mod sphere;
 mod vec3;
 mod material;
 
-use rtweekend::random_float;
+use rtweekend::{random_float, clamp};
 use camera::Camera;
 use hittable::{Hittable, HittableList};
 use ray::Ray;
@@ -142,9 +142,9 @@ fn write_colors(
     g = (scale * g).sqrt();
     b = (scale * b).sqrt();
 
-    let ir = (256.0 * r.min(0.999)) as u8;
-    let ig = (256.0 * g.min(0.999)) as u8;
-    let ib = (256.0 * b.min(0.999)) as u8;
+    let ir = (256.0 * clamp(r, 0.0, 0.999)) as u8;
+    let ig = (256.0 * clamp(g, 0.0, 0.999)) as u8;
+    let ib = (256.0 * clamp(b, 0.0, 0.999)) as u8;
 
     image.put_pixel(x, y, Rgb([ir, ig, ib]));
 }
